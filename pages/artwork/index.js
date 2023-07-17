@@ -1,19 +1,10 @@
-/*********************************************************************************
- *  WEB422 – Assignment 4
- *  I declare that this assignment is my own work in accordance with Seneca Academic Policy.
- *  No part of this assignment has been copied manually or electronically from any other source
- *  (including web sites) or distributed to other students.
- *
- *  Name: Yongda Long Student ID: 172800211 Date: Jun 26, 2023
- *
- ********************************************************************************/
-
 import { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 import { Row, Col, Pagination, Card } from "react-bootstrap";
 import useSWR from "swr";
 import ArtworkCard from "@/component/ArtworkCard";
 import Error from "next/error";
+import validObjectIDList from "@/public/data/validObjectIDList.json";
 
 export default function Artwork() {
   const PER_PAGE = 12;
@@ -42,9 +33,12 @@ export default function Artwork() {
 
   useEffect(() => {
     if (data) {
+      let filteredResults = validObjectIDList.objectIDs.filter((x) =>
+        data.objectIDs?.includes(x)
+      );
       let results = [];
-      for (let i = 0; i < data?.objectIDs?.length; i += PER_PAGE) {
-        const chunk = data?.objectIDs.slice(i, i + PER_PAGE);
+      for (let i = 0; i < filteredResults.length; i += PER_PAGE) {
+        const chunk = filteredResults.slice(i, i + PER_PAGE);
         results.push(chunk);
       }
       setArtworkList(results);
@@ -67,9 +61,10 @@ export default function Artwork() {
         ) : (
           <Card>
             <Card.Body>
-              <Card.Text>
-                <h4>Nothing Here</h4>Try searching for something else.
-              </Card.Text>
+              <Card.Title>
+                <h4>Nothing Here</h4>
+              </Card.Title>
+              <Card.Text>Try searching for something else.</Card.Text>
             </Card.Body>
           </Card>
         )}

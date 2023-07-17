@@ -1,6 +1,8 @@
 import { useRouter } from "next/router";
 import { Form, Button, Row, Col } from "react-bootstrap";
 import { useForm } from "react-hook-form";
+import { useAtom } from "jotai";
+import { searchHistoryAtom } from "@/store";
 
 export default function AdvancedSearch() {
   const router = useRouter();
@@ -10,6 +12,7 @@ export default function AdvancedSearch() {
     setValue,
     formState: { errors },
   } = useForm();
+  const [searchHistory, setSearchHistory] = useAtom(searchHistoryAtom);
 
   const submitForm = (data) => {
     let queryString = `${data.searchBy}=true`;
@@ -17,6 +20,7 @@ export default function AdvancedSearch() {
     if (data.geoLocation) queryString += `&geoLocation=${data.geoLocation}`;
     if (data.medium) queryString += `&geoLocation=${data.medium}`;
     queryString += `&isOnView=${data.isOnView}&isHighlight=${data.isHighlight}&q=${data.q}`;
+    setSearchHistory((current) => [...current, queryString]);
     router.push(`/artwork?${queryString}`);
   };
 
