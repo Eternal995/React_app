@@ -2,8 +2,10 @@ import useSWR from "swr";
 import { Card, Button } from "react-bootstrap";
 import Error from "next/error";
 import { useState } from "react";
+import { useEffect } from "react";
 import { useAtom } from "jotai";
 import { favouritesAtom } from "@/store";
+import { addToFavourites, removeFromFavourites } from "@/lib/userData";
 
 export default function ArtworkCardDetail(props) {
   const { data, error } = useSWR(
@@ -15,18 +17,19 @@ export default function ArtworkCardDetail(props) {
   if (!data) return null;
 
   const [favouritesList, setFavouritesList] = useAtom(favouritesAtom);
-  const [showAdded, setShowAdded] = useState(
-    favouritesList.includes(props.objectID)
-  );
-  console.log(favouritesList);
+  const [showAdded, setShowAdded] = useState(false);
 
-  const favouritesClicked = () => {
+  useEffect(() => {
+    setShowAdded(favouritesList?.includes(props.objectID));
+  }, [favouritesList]);
+
+  const favouritesClicked = async () => {
     if (showAdded) {
-      setFavouritesList((current) =>
-        current.filter((fav) => fav != props.objectID)
-      );
+      setFavouritesList(await removeFromFavourites(props.objectID));
+      setShowAdded(false);
     } else {
-      setFavouritesList((current) => [...current, props.objectID]);
+      setFavouritesList(await addToFavourites(props.objectID));
+      setShowAdded(true);
     }
     setShowAdded(!showAdded);
   };

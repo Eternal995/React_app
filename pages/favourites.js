@@ -5,7 +5,7 @@ import ArtworkCard from "@/component/ArtworkCard";
 
 export default function Favourites() {
   const [favouritesList] = useAtom(favouritesAtom);
-  console.log(favouritesList);
+  if (!favouritesList) return null;
 
   return (
     <>
